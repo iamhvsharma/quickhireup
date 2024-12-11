@@ -30,6 +30,7 @@
       }
     };
 
+
     useEffect(() => {
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
@@ -46,6 +47,28 @@
           </div>
           <Link to="/" className="text-2xl font-bold text-blue-900 ml-1">
             QuickHireUp
+
+      {/* Links Section */}
+      <ul className="hidden md:flex space-x-8 text-sm text-gray-600">
+        <li>
+          <Link to="/auth/register" className="hover:text-blue-700">
+            Jobs
+          </Link>
+        </li>
+        <li>
+          <Link to="/auth/register" className="hover:text-blue-700">
+            Companies
+          </Link>
+        </li>
+        <li>
+          <Link to="/auth/register" className="hover:text-blue-700">
+            Students
+          </Link>
+        </li>
+        <li>
+          <Link to="/auth/register" className="hover:text-blue-700">
+            Mentors
+
           </Link>
         </div>
 

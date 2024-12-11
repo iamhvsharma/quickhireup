@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import AuthCard from './components/AuthCard';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useToast } from '../../hooks/use-toast';
 
 const UnifiedAuth = ({ type }) => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const UnifiedAuth = ({ type }) => {
   });
 
   const { login } = useAuth();
+  const { toast } = useToast();
 
   const roles = [
     { id: 'jobseeker', label: 'Job Seeker', color: 'blue' },
@@ -44,131 +46,179 @@ const UnifiedAuth = ({ type }) => {
 
   const navigateAfterLogin = (userRole) => {
     switch (userRole) {
-      case 'jobseeker':
-        navigate('/ForJobs');
-        break;
       case 'company':
-        navigate('/Process');
+        navigate('/company/onboarding');
+        break;
+      case 'jobseeker':
+        navigate('/jobseeker/onboarding');
         break;
       case 'mentor':
-        navigate('/Mentor');
+        navigate('/mentor/onboarding');
         break;
       case 'student':
-        navigate('/student');
+        navigate('/student/onboarding');
         break;
       default:
         navigate('/dashboard');
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (type === 'register') {
         if (formData.password !== formData.confirmPassword) {
-          alert("Passwords don't match!");
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Passwords don't match!",
+            duration: 3000,
+          });
           return;
         }
         if (!selectedRole) {
-          alert("Please select a role.");
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Please select a role.",
+            duration: 3000,
+          });
           return;
         }
-  
-        console.log("Sending request with data:", { ...formData, role: selectedRole });
-  
+
         // Register
         await axios.post('http://localhost:8000/api/auth/signup', { ...formData, role: selectedRole });
-        const loginResponse = await login({ email: formData.email, password: formData.password });
+        toast({
+          title: "Success!",
+          description: "Registration successful!",
+          duration: 3000,
+        });
+        await login({ email: formData.email, password: formData.password });
         navigateToProfileCreation(selectedRole);
       } else {
         // Login
         const loginResponse = await login({ email: formData.email, password: formData.password });
-        // Assuming the login response includes the user's role
+        toast({
+          title: "Success!",
+          description: "Login successful!",
+          duration: 3000,
+        });
         const userRole = loginResponse?.user?.role;
         navigateAfterLogin(userRole);
       }
     } catch (error) {
       console.error('Error during form submission:', error);
-      alert(`Error: ${error.response?.data?.message || error.message}`);
+      const errorMessage = error.response?.data?.message || error.message;
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: errorMessage,
+        duration: 3000,
+      });
     }
   };
-  
 
   return (
     <AuthCard title={type === 'login' ? 'Login' : 'Register'}>
       <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="space-y-4">
-          {/*  Name - Visible only during registration */}
+        <div className="space-y-6">
+          {/* Name - Visible only during registration */}
           {type === 'register' && (
-            <input
-              type="text"
-              required
-              placeholder="Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full p-2 border rounded"
-            />
+            <label className="block mb-2">
+              Name
+              <input
+                type="text"
+                required
+                placeholder="Name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
           )}
 
           {/* Email - Visible in both login and registration */}
-          <input
-            type="email"
-            required
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full p-2 border rounded"
-          />
+          <label className="block mb-2">
+            Email
+            <input
+              type="email"
+              required
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full p-2 border rounded mt-1"
+            />
+          </label>
 
           {/* Password - Visible in both login and registration */}
-          <input
-            type="password"
-            required
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className="w-full p-2 border rounded"
-          />
-
-          {/* Confirm Password - Visible only during registration */}
-          {type === 'register' && (
+          <label className="block mb-2">
+            Password
             <input
               type="password"
               required
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full p-2 border rounded"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full p-2 border rounded mt-1"
             />
+          </label>
+
+          {/* Confirm Password - Visible only during registration */}
+          {type === 'register' && (
+            <label className="block mb-2">
+              Confirm Password
+              <input
+                type="password"
+                required
+                placeholder="Confirm Password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="w-full p-2 border rounded mt-1"
+              />
+            </label>
           )}
 
           {/* Role Selection - Visible only during registration */}
           {type === 'register' && (
-            <select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full p-2 border rounded"
-              required
-            >
-              <option value="">Select Role</option>
-              {roles.map(role => (
-                <option key={role.id} value={role.id}>
-                  {role.label}
-                </option>
-              ))}
-            </select>
+            <label className="block mb-2">
+              Role
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full p-2 border rounded mt-1"
+                required
+              >
+                <option value="">Select Role</option>
+                {roles.map(role => (
+                  <option key={role.id} value={role.id}>
+                    {role.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           )}
 
           {/* Submit Button */}
           <button
             type="submit"
             className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
-              type === 'login' ? 'bg-blue-600 hover:bg-blue-700' : 
-              `bg-${roles.find(r => r.id === selectedRole)?.color}-600 hover:bg-${roles.find(r => r.id === selectedRole)?.color}-700`
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${type === 'login' ? 'blue' : roles.find(r => r.id === selectedRole)?.color}-500`}
+              type === 'login' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
           >
             {type === 'login' ? 'Sign in' : 'Register'}
           </button>
+
+          {/* Redirect Links */}
+          {type === 'register' && (
+            <p className="text-center text-sm text-gray-600">
+              Already have an account? <Link to="/auth/login" className="text-blue-500 hover:text-blue-600">Log in</Link>
+            </p>
+          )}
+          {type === 'login' && (
+            <p className="text-center text-sm text-gray-600">
+              Don't have an account? <Link to="/auth/register" className="text-blue-500 hover:text-blue-600">Register</Link>
+            </p>
+          )}
         </div>
       </form>
     </AuthCard>
@@ -176,3 +226,4 @@ const UnifiedAuth = ({ type }) => {
 };
 
 export default UnifiedAuth;
+

@@ -2,22 +2,19 @@ import mongoose from "mongoose";
 
 const jobSeekerSchema = new mongoose.Schema(
   {
-    // Basic Details
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    name: { type: String, required: true }, // From users table
-    location: { type: String, required: true }, // "Where are you based?"
-    currentRole: { type: String, required: true }, // "What best describes your current role?"
-    experienceYears: { type: Number, required: true }, // "How many years of experience do you have?"
-    isStudentOrNewGrad: { type: Boolean, required: true }, // "Are you a student or new grad?"
+    name: { type: String, required: true },
+    location: { type: String, required: true },
+    currentRole: { type: String, required: true },
+    experienceYears: { type: Number, required: true },
+    isStudentOrNewGrad: { type: Boolean, required: true },
     currentEmployer: {
       companyName: { type: String },
       jobTitle: { type: String },
-      notEmployed: { type: Boolean, default: false }, // Checkbox: "I’m not currently employed"
+      notEmployed: { type: Boolean, default: false },
     },
-    linkedinProfile: { type: String }, // URL
-    website: { type: String }, // URL
-
-    // Job Preferences
+    linkedinProfile: { type: String },
+    website: { type: String },
     jobSearchStatus: {
       readyToInterview: { type: Boolean, default: false },
       openToOffers: { type: Boolean, default: false },
@@ -30,14 +27,12 @@ const jobSeekerSchema = new mongoose.Schema(
       coFounder: { type: Boolean, default: false },
     },
     desiredSalary: {
-      currency: { type: String, required: true }, // Currency code (e.g., USD, INR)
+      currency: { type: String, required: true },
       amount: { type: Number, required: true },
     },
-    rolePreference: { type: String }, // "What kind of role are you looking for?"
-    preferredLocation: { type: String }, // "What location do you want to work in?"
-    openToRemote: { type: Boolean, default: false }, // "I’m open to work remotely"
-
-    // Company Size Preferences
+    rolePreference: { type: String },
+    preferredLocation: { type: String },
+    openToRemote: { type: Boolean, default: false },
     companySizePreferences: {
       seed: { type: String, enum: ["IDEAL", "YES", "NO"] },
       early: { type: String, enum: ["IDEAL", "YES", "NO"] },
@@ -46,12 +41,8 @@ const jobSeekerSchema = new mongoose.Schema(
       veryLarge: { type: String, enum: ["IDEAL", "YES", "NO"] },
       massive: { type: String, enum: ["IDEAL", "YES", "NO"] },
     },
-
-    // Technology Preferences
-    interestedTechnologies: [{ type: String, maxlength: 20 }], // Max 5
-    unwillingTechnologies: [{ type: String, maxlength: 20 }], // Max 5
-
-    // Work Preferences
+    interestedTechnologies: [{ type: String, maxlength: 20 }],
+    unwillingTechnologies: [{ type: String, maxlength: 20 }],
     motivators: {
       solvingProblems: { type: Boolean, default: false },
       buildingProducts: { type: Boolean, default: false },
@@ -61,7 +52,7 @@ const jobSeekerSchema = new mongoose.Schema(
       clearResponsibilities: { type: Boolean, default: false },
       versatileAssignments: { type: Boolean, default: false },
     },
-    jobPriorities: [{ type: String, maxlength: 50 }], // Max 2 priorities
+    jobPriorities: [{ type: String, maxlength: 50 }],
     flexibleRemotePolicy: {
       type: String,
       enum: ["Very important", "Important", "Not important"],
@@ -70,17 +61,13 @@ const jobSeekerSchema = new mongoose.Schema(
       type: String,
       enum: ["Very important", "Important", "Not important"],
     },
-    nextJobDescription: { type: String, maxlength: 300 }, // Free-text input
-    resume: { type: String }, // URL for resume file storage
-
-    // Verification
+    nextJobDescription: { type: String, maxlength: 300 },
+    resume: { type: String },
     emailVerified: { type: Boolean, default: false },
     verificationCode: { type: String },
-
-    // Profile Dashboard Details
-    avatar: { type: String }, // Cloudinary URL
-    openRoles: [{ type: String }], // Array of roles user is open to
-    bio: { type: String, maxlength: 1000 }, // Free-text bio
+    avatar: { type: String },
+    openRoles: [{ type: String }],
+    bio: { type: String, maxlength: 1000 },
     experience: [
       {
         companyName: { type: String },
@@ -100,30 +87,29 @@ const jobSeekerSchema = new mongoose.Schema(
         cgpaOrPercentage: { type: String },
       },
     ],
-    skills: [{ type: String, maxlength: 50 }], // Array of skills, max 50
-    achievements: { type: String, maxlength: 1000 }, // Free-text achievements
-    pronouns: { type: String }, // User's preferred pronouns
-    genderIdentity: { type: String }, // User's gender identity
-    certifications: [ // Array of certifications
+    skills: [{ type: String, maxlength: 50 }],
+    achievements: { type: String, maxlength: 1000 },
+    pronouns: { type: String },
+    genderIdentity: { type: String },
+    certifications: [
       {
         title: { type: String, required: true },
         description: { type: String },
-        url: { type: String }, // Certificate URL
+        url: { type: String },
         issuingOrganization: { type: String, required: true },
       },
     ],
-
-    // Projects
     projects: [
       {
         title: { type: String, required: true },
         description: { type: String },
-        media: [{ type: String, maxlength: 300 }], // Cloudinary URLs (max 3)
-        liveLink: { type: String }, // Project live link
-        githubLink: { type: String }, // GitHub repository link
-        skills: [{ type: String, maxlength: 20 }], // Related skills
+        media: [{ type: String, maxlength: 300 }],
+        liveLink: { type: String },
+        githubLink: { type: String },
+        skills: [{ type: String, maxlength: 20 }],
       },
     ],
+
 
     // Add/Update Profile Building fields
     profileBuildingStatus: {
@@ -177,8 +163,11 @@ const jobSeekerSchema = new mongoose.Schema(
       uploadDate: { type: Date },
       fileType: { type: String }
     },
+
+    appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }], // New field for applied jobs
+
   },
-  { timestamps: true } // Automatically add createdAt and updatedAt fields
+  { timestamps: true }
 );
 
 // Add a method to check if profile is complete
