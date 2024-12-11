@@ -103,7 +103,7 @@ const App = () => {
                 <Route path="help" element={<Help />} /> */}
               </Route>
 
-              <Route path="/system">
+              <Route path="/Auth">
                 <Route path="login" element={<UnifiedAuth type="login" />} />
                 <Route path="register" element={<UnifiedAuth type="register" />} />
               </Route>

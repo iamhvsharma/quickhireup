@@ -29,10 +29,10 @@ const UnifiedAuth = ({ type }) => {
         navigate('/CompanyProfile');
         break;
       case 'jobseeker':
-        navigate('/create-jobseeker-profile');
+        navigate('/forJob');
         break;
       case 'mentor':
-        navigate('/create-mentor-profile');
+        navigate('/');
         break;
       case 'student':
         navigate('/create-student-profile');
