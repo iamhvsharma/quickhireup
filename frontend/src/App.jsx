@@ -40,6 +40,7 @@ import StudentDashboard from './Component/Student/Dashboard/StudentDashboard'
 // import Help from './Component/Student/Dashboard/Pages/Help';
 
 import UnifiedAuth from "./Component/Auth/UnifiedAuth";
+import ApplicationDetails from "./Component/Company/Dashboard/Applications/ApplicationDetails";
 import { AuthProvider } from "./Component/Auth/context/AuthContext";
 import { Toaster } from "./components/ui/toaster";
 
@@ -110,6 +111,19 @@ const App = () => {
                   <Route path="settings" element={<Settings />} />
                   <Route path="help" element={<Help />} /> */}
                 </Route>
+                <Route path="/company/applications/:id" element={<ApplicationDetails />} />
+
+            
+
+   
+
+            </Routes>
+           
+          </Router>
+          </AuthProvider>
+        </JobPreferencesProvider>
+      </StudentProfileProvider>
+   
 
                 <Route path="/Auth">
                   <Route path="login" element={<UnifiedAuth type="login" />} />
@@ -125,6 +139,7 @@ const App = () => {
       </AuthProvider>
       <Toaster />
     </>
+
   );
 };
 
