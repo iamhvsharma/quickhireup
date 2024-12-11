@@ -1,202 +1,283 @@
-import React, { useState } from 'react';
-import { useAuth } from './context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import { useToast } from '../../hooks/use-toast';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useAuth } from "./context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
+import { useToast } from "../../hooks/use-toast";
+import axios from "axios";
+import { BackgroundDashboard } from "@/components/ui/Background";
 
-const UnifiedAuth = ({ type = 'login' }) => {
+const UnifiedAuth = () => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
+
   const { login } = useAuth();
   const { toast } = useToast();
-  const [selectedRole, setSelectedRole] = useState('');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
 
   const roles = [
-    { id: 'jobseeker', label: 'Job Seeker', color: 'blue' },
-    { id: 'company', label: 'Company', color: 'green' },
-    { id: 'mentor', label: 'Mentor', color: 'purple' },
-    { id: 'student', label: 'Student', color: 'indigo' }
+    { id: "jobseeker", label: "Job Seeker", color: "blue" },
+    { id: "company", label: "Company", color: "green" },
+    { id: "mentor", label: "Mentor", color: "purple" },
+    { id: "student", label: "Student", color: "indigo" },
   ];
 
   const navigateToProfileCreation = (role) => {
-    const routes = {
-      company: '/CompanyProfile',
-      jobseeker: '/forJob',
-      mentor: '/',
-      student: '/create-student-profile',
-    };
-    navigate(routes[role] || '/dashboard');
+    switch (role) {
+      case "company":
+        navigate("/CompanyProfile");
+        break;
+      case "jobseeker":
+        navigate("/forJob");
+        break;
+      case "mentor":
+        navigate("/");
+        break;
+      case "student":
+        navigate("/create-student-profile");
+        break;
+      default:
+        navigate("/dashboard");
+    }
   };
 
   const navigateAfterLogin = (userRole) => {
-    const routes = {
-      company: '/company/onboarding',
-      jobseeker: '/jobseeker/onboarding',
-      mentor: '/mentor/onboarding',
-      student: '/student/onboarding',
-    };
-    navigate(routes[userRole] || '/dashboard');
+    switch (userRole) {
+      case "jobseeker":
+        navigate("/ForJobs");
+        break;
+      case "company":
+        navigate("/Process");
+        break;
+      case "mentor":
+        navigate("/Mentor");
+        break;
+      case "student":
+        navigate("/student");
+        break;
+      default:
+        navigate("/dashboard");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (type === 'register') {
-        if (formData.password !== formData.confirmPassword) {
+      if (!isLogin) {
+        if (password !== confirmPassword) {
           toast({
-            variant: "destructive",
             title: "Error",
             description: "Passwords don't match!",
-            duration: 3000,
+            variant: "destructive",
           });
           return;
         }
         if (!selectedRole) {
           toast({
-            variant: "destructive",
             title: "Error",
             description: "Please select a role.",
-            duration: 3000,
+            variant: "destructive",
           });
           return;
         }
 
-        await axios.post('http://localhost:8000/api/auth/signup', { ...formData, role: selectedRole });
-        toast({
-          title: "Success!",
-          description: "Registration successful!",
-          duration: 3000,
+        // Register
+        await axios.post("http://localhost:8000/api/auth/signup", {
+          name,
+          email,
+          password,
+          role: selectedRole,
         });
-        await login({ email: formData.email, password: formData.password });
-        navigateToProfileCreation(selectedRole);
+        toast({
+          title: "Success",
+          description: "Registration successful! Please login to continue.",
+          variant: "success",
+          className: "bg-white border-green-200",
+        });
+        
+        // Clear all fields except email and switch to login
+        setName("");
+        setPassword("");
+        setConfirmPassword("");
+        setSelectedRole("");
+        setIsLogin(true);
+        
       } else {
-        const loginResponse = await login({ email: formData.email, password: formData.password });
-        toast({
-          title: "Success!",
-          description: "Login successful!",
-          duration: 3000,
-        });
-
-        navigateAfterLogin(loginResponse?.user?.role);
+        // Login
+        try {
+          const loginResponse = await login({ email, password });
+          const userRole = loginResponse?.user?.role;
+          
+          toast({
+            title: "Welcome back!",
+            description: `Successfully logged in as ${loginResponse?.user?.name || email}`,
+            variant: "success",
+            className: "bg-white border-green-200",
+          });
+          
+          setTimeout(() => {
+            navigateAfterLogin(userRole);
+          }, 1000);
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: error.message || "Invalid credentials",
+            variant: "destructive",
+          });
+          return;
+        }
       }
     } catch (error) {
-      console.error('Error during form submission:', error);
+      console.error("Error during form submission:", error);
+      const errorMessage = error.response?.data?.message || error.message;
       toast({
+        title: "Error",
+        description: errorMessage,
         variant: "destructive",
-        title: "Error!",
-        description: error.response?.data?.message || error.message,
-
-        duration: 3000,
       });
     }
   };
 
   return (
+    <div className="relative min-h-screen w-full overflow-y-auto">
+      <div className="fixed top-0 left-0 z-[-2] h-full w-full bg-gradient-to-r from-red-200 to-yellow-200"></div>
+      <div className="fixed top-0 right-0 z-[-2] h-full w-full bg-gradient-to-l from-blue-200 to-white"></div>
+      <div className="fixed bottom-0 left-0 z-[-2] h-full w-full bg-gradient-to-t from-yellow-200 to-black"></div>
+      <div className="fixed bottom-0 right-0 z-[-2] h-full w-full bg-gradient-to-b from-blue-200 to-white"></div>
+      <div className="min-h-screen flex flex-col justify-start pt-4 sm:pt-12 px-4">
+        <div className="w-full max-w-md mx-auto">
+          {/* Logo Section */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              QuickHireUp
+            </h1>
+            <p className="text-slate-600 mt-2">
+              {isLogin ? "Welcome back!" : "Create your account"}
+            </p>
+          </div>
 
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-slate-800">QuickHireUp</h1>
-          <p className="text-slate-600 mt-2">
-            {type === 'login' ? 'Sign in to your account' : 'Create a new account'}
-          </p>
-        </div>
+          {/* Auth Card */}
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+            <div className="flex gap-4 mb-8">
+              <button
+                className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  isLogin
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+                onClick={() => setIsLogin(true)}
+              >
+                Login
+              </button>
+              <button
+                className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  !isLogin
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+                onClick={() => setIsLogin(false)}
+              >
+                Register
+              </button>
+            </div>
 
-        <div className="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-          <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
-              {type === 'register' && (
+              {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     Full Name
                   </label>
                   <input
                     type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all text-sm"
                     placeholder="Enter your full name"
+                    required
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Email Address
                 </label>
                 <input
                   type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all text-sm"
                   placeholder="Enter your email"
+                  required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Password
                 </label>
                 <input
                   type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all text-sm"
                   placeholder="Enter your password"
+                  required
                 />
               </div>
 
-              {type === 'register' && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
-                      placeholder="Confirm your password"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Select Role
-                    </label>
-                    <select
-                      value={selectedRole}
-                      onChange={(e) => setSelectedRole(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-slate-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
-                      required
-                    >
-                      <option value="">Select your role</option>
-                      {roles.map(role => (
-                        <option key={role.id} value={role.id}>
-                          {role.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </>
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all text-sm"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
               )}
 
-              {type === 'login' && (
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Role
+                  </label>
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all text-sm"
+                    required
+                  >
+                    <option value="">Select Role</option>
+                    {roles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {isLogin && (
                 <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="rounded text-blue-500 focus:ring-blue-500" />
+                    <input
+                      type="checkbox"
+                      className="rounded text-indigo-600 focus:ring-indigo-600"
+                    />
                     <span className="text-slate-600">Remember me</span>
                   </label>
-                  <Link to="/forgot-password" className="text-blue-500 hover:text-blue-600">
+                  <Link
+                    to="/forgot-password"
+                    className="text-indigo-600 hover:text-indigo-700"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -204,38 +285,68 @@ const UnifiedAuth = ({ type = 'login' }) => {
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors"
+                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-indigo-200 transition-all duration-200"
               >
-                {type === 'login' ? 'Sign In' : 'Create Account'}
+                {isLogin ? "Sign In" : "Create Account"}
               </button>
             </form>
 
-            <div className="mt-6">
-              <p className="text-center text-sm text-slate-600">
-                {type === 'login' ? (
-                  <>
-                    Don't have an account?{' '}
-                    <Link to="/auth/register" className="text-blue-500 hover:text-blue-600">
-                      Register
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{' '}
-                    <Link to="/auth/login" className="text-blue-500 hover:text-blue-600">
-                      Sign in
-                    </Link>
-                  </>
-                )}
-              </p>
+            {/* Social Login */}
+            <div className="mt-8">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-slate-500">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-4">
+                <button className="flex items-center justify-center px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200">
+                  <img
+                    src="https://www.svgrepo.com/show/475656/google-color.svg"
+                    alt="Google"
+                    className="h-5 w-5 mr-2"
+                  />
+                  <span className="text-sm font-medium text-slate-600">
+                    Google
+                  </span>
+                </button>
+                <button className="flex items-center justify-center px-4 py-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-200">
+                  <img
+                    src="https://www.svgrepo.com/show/448234/linkedin.svg"
+                    alt="LinkedIn"
+                    className="h-5 w-5 mr-2"
+                  />
+                  <span className="text-sm font-medium text-slate-600">
+                    LinkedIn
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Footer Text */}
+          <p className="text-center text-sm text-slate-600 mt-8">
+            By continuing, you agree to our{" "}
+            <Link to="/terms" className="text-indigo-600 hover:text-indigo-700">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              to="/privacy"
+              className="text-indigo-600 hover:text-indigo-700"
+            >
+              Privacy Policy
+            </Link>
+          </p>
         </div>
       </div>
     </div>
-
   );
 };
 
 export default UnifiedAuth;
-
