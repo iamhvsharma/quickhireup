@@ -13,10 +13,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       setUser(user);
       console.log('Login successful:', user);
-      console.log(token)
+      return response.data;
     } catch (error) {
       console.error('Login failed:', error);
       alert(`Login failed: ${error.response?.data?.message || error.message}`);
+      throw error;
     }
   };
 
