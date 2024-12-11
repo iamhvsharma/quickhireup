@@ -92,19 +92,42 @@ const UnifiedAuth = () => {
         });
         toast({
           title: "Success",
-          description: "Registration successful!",
+          description: "Registration successful! Please login to continue.",
+          variant: "success",
+          className: "bg-white border-green-200",
         });
-        const loginResponse = await login({ email, password });
-        navigateToProfileCreation(selectedRole);
+        
+        // Clear all fields except email and switch to login
+        setName("");
+        setPassword("");
+        setConfirmPassword("");
+        setSelectedRole("");
+        setIsLogin(true);
+        
       } else {
         // Login
-        const loginResponse = await login({ email, password });
-        toast({
-          title: "Success",
-          description: "Login successful!",
-        });
-        const userRole = loginResponse?.user?.role;
-        navigateAfterLogin(userRole);
+        try {
+          const loginResponse = await login({ email, password });
+          const userRole = loginResponse?.user?.role;
+          
+          toast({
+            title: "Welcome back!",
+            description: `Successfully logged in as ${loginResponse?.user?.name || email}`,
+            variant: "success",
+            className: "bg-white border-green-200",
+          });
+          
+          setTimeout(() => {
+            navigateAfterLogin(userRole);
+          }, 1000);
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: error.message || "Invalid credentials",
+            variant: "destructive",
+          });
+          return;
+        }
       }
     } catch (error) {
       console.error("Error during form submission:", error);
@@ -118,12 +141,12 @@ const UnifiedAuth = () => {
   };
 
   return (
-    <div class="relative h-screen w-full overflow-hidden">
-      <div class="absolute top-0 left-0 z-[-2] h-full w-full bg-gradient-to-r from-red-200 to-yellow-200"></div>
-      <div class="absolute top-0 right-0 z-[-2] h-full w-full bg-gradient-to-l from-blue-200 to-white"></div>
-      <div class="absolute bottom-0 left-0 z-[-2] h-full w-full bg-gradient-to-t from-yellow-200 to-black"></div>
-      <div class="absolute bottom-0 right-0 z-[-2] h-full w-full bg-gradient-to-b from-blue-200 to-white"></div>
-      <div className="min-h-screen flex items-start sm:items-center justify-center px-4 py-8 sm:py-12">
+    <div className="relative min-h-screen w-full overflow-y-auto">
+      <div className="fixed top-0 left-0 z-[-2] h-full w-full bg-gradient-to-r from-red-200 to-yellow-200"></div>
+      <div className="fixed top-0 right-0 z-[-2] h-full w-full bg-gradient-to-l from-blue-200 to-white"></div>
+      <div className="fixed bottom-0 left-0 z-[-2] h-full w-full bg-gradient-to-t from-yellow-200 to-black"></div>
+      <div className="fixed bottom-0 right-0 z-[-2] h-full w-full bg-gradient-to-b from-blue-200 to-white"></div>
+      <div className="min-h-screen flex flex-col justify-start pt-4 sm:pt-12 px-4">
         <div className="w-full max-w-md mx-auto">
           {/* Logo Section */}
           <div className="text-center mb-8">
