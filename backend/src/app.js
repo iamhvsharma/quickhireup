@@ -1,30 +1,59 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-import jobSeekerRoutes from './routes/jobseeker.routes.js';
+import authRoutes from "./routes/auth.routes.js";
+import companyRoutes from "./routes/companyprofile.routes.js";
+import jobListingRoutes from "./routes/jobListing.routes.js";
+import jobSeekerRoutes from "./routes/jobseeker.routes.js";
+import mentorRoutes from "./routes/mentor.routes.js";
+import memtorshipListingRoutes from "./routes/mentorshipListing.routes.js";
+import mentorshipListingRoutes from "./routes/mentorshipListing.routes.js";
+import studentRoutes from "./routes/student.routes.js";
 
+
+// Creating App
 const app = express();
 
-// CORS configuration
-app.use(cors({
-    origin: 'http://localhost:5173', // Your frontend URL
-    credentials: true
-}));
+// Configuring Cors
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Adding express.json middleware
+app.use(express.json({ limit: "16kb" }));
 
-// Serve uploaded files statically
-app.use('/uploads', express.static('uploads'));
+// Adding URLencoded middleware
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 
-// Routes
-app.use('/api', jobSeekerRoutes);
+// Adding Cookie Parser Middleware
+app.use(cookieParser());
 
-// Basic route for testing
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: "success",
-        message: "Server is running"
-    });
-});
+// Auth Route Signup login
+app.use("/api/auth", authRoutes);
+
+// Company Profile Creation Routes
+app.use("/api/profile", companyRoutes);
+
+// Job Listing Route for Company
+app.use("/api/company", jobListingRoutes);
+
+
+
+// Job Seeker Profile Creation Route
+app.use("/api", jobSeekerRoutes);
+
+// Student Profile Creation Route
+app.use("/api/profile", studentRoutes);
+
+
+// Mentor Profile Creation Route
+app.use("/api/profile", mentorRoutes);
+
+// Mentorship Listing Route
+app.use("/api/listing", mentorshipListingRoutes);
+
 
 export { app };
