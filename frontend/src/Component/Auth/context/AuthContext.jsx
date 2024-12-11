@@ -10,9 +10,17 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('http://localhost:8000/api/auth/login', credentials);
       if (response.data) {
-        setUser(response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
-        return response.data;
+        const userData = {
+          ...response.data,
+          user: {
+            ...response.data.user,
+            isProfileComplete: response.data.user?.isProfileComplete ?? false,
+            role: response.data.user?.role
+          }
+        };
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return userData;
       }
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed');
