@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { Search } from 'lucide-react';
 import CompanyLogos from './CompanyLogos';
 
@@ -8,12 +9,24 @@ const Home = () => {
   const [experience, setExperience] = useState("");
 
   // Array of user avatars
-  const userAvatars = [
-    'https://randomuser.me/api/portraits/men/1.jpg',
-    'https://randomuser.me/api/portraits/women/2.jpg',
-    'https://randomuser.me/api/portraits/men/3.jpg',
-    'https://randomuser.me/api/portraits/women/4.jpg',
-  ];
+
+import typescriptIcon from '../../assets/icons/typescript.svg';
+import reactIcon from '../../assets/icons/reactjs.svg';
+import nodeIcon from '../../assets/icons/nodejs.svg';
+import mongodbIcon from '../../assets/icons/mongodb.svg';
+import rustIcon from '../../assets/icons/rust.svg';
+import bitcoinIcon from '../../assets/icons/lightroom.svg';
+
+const Home = () => {
+  
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  };
+
+  // Array of user avatars - you can replace these with your actual image URLs
+
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -32,6 +45,53 @@ const Home = () => {
             We leverage AI to make hiring faster, Find positions that inspire and challenge you daily Access resources, tools, and support for your journey.
           </p>
         </div>
+
+  // Define tech stack icons with their positions
+  const techIcons = [
+    { src: typescriptIcon, alt: "TypeScript", className: "absolute top-20 left-20" },
+    { src: reactIcon, alt: "React", className: "absolute top-40 right-20" },
+    { src: nodeIcon, alt: "Node.js", className: "absolute bottom-40 left-40" },
+    { src: mongodbIcon, alt: "MongoDB", className: "absolute top-60 right-40" },
+    { src: rustIcon, alt: "Rust", className: "absolute bottom-20 left-60" },
+    { src: bitcoinIcon, alt: "Bitcoin", className: "absolute bottom-60 right-60" }
+  ];
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center  bg-gradient-to-b py-12 relative overflow-hidden"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Floating Tech Icons */}
+      <div className="absolute inset-0 pointer-events-none">
+        {techIcons.map((icon, index) => (
+          <div
+            key={index}
+            className={`${icon.className} transform transition-transform duration-300`}
+            style={{
+              transform: `translate(
+                ${mousePosition.x * 0.05}px,
+                ${mousePosition.y * 0.05}px
+              )`,
+            }}
+          >
+            <img
+              src={icon.src}
+              alt={icon.alt}
+              className="w-12 h-12 md:w-16 md:h-16  hover:opacity-100 transition-opacity duration-300 filter contrast-125"
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="text-center px-4 max-w-4xl mx-auto relative z-10">
+        
+        <h1 className="text-5xl md:text-6xl font-bold text-gray-900">
+          Unlock Your<span className="text-blue-600">⚡Career</span> Potential with Exciting<span className="text-blue-600">📄Opportunities!</span>
+        </h1>
+        <p className="text-lg md:text-xl text-gray-600 mt-6 max-w-3xl mx-auto">
+          We leverage AI to make hiring faster, Find positions that inspire and challenge you daily Access resources, tools, and support for your journey.
+        </p>
+
 
         {/* Desktop Search Bar */}
         <div className="hidden md:flex mt-8 justify-center">
@@ -123,10 +183,37 @@ const Home = () => {
           <button className="w-full sm:w-auto bg-[#4F46E5] hover:bg-[#4338CA] text-white px-6 py-2.5 rounded-full text-base font-semibold flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl">
             Find Your Next Hire
           </button>
+
           <button className="w-full sm:w-auto bg-white text-[#4F46E5] px-6 py-2.5 rounded-full text-base font-semibold border-2 border-[#4F46E5] flex items-center justify-center hover:bg-[#4F46E5] hover:text-white transition-all duration-300">
             Find Your Dream Job
           </button>
         </div>
+
+
+        {/* Trusted By Section */}
+        <div className="flex items-center bg-white rounded-full px-6 py-3 shadow-md">
+          <div className="flex -space-x-3 mr-4">
+            {userAvatars.map((avatar, i) => (
+              <div
+                key={i}
+                className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm hover:z-10 transition-transform hover:scale-110"
+              >
+                <img
+                  src={avatar}
+                  alt={`User ${i + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = `https://ui-avatars.com/api/?name=User${i + 1}&background=random`;
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-gray-700">
+            Trusted by <span className="text-[#4F46E5] font-semibold">10,000+</span> authors
+          </p>
+        </div>
+
       </div>
     </div>
   );
