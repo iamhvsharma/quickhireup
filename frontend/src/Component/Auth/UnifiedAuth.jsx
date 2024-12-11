@@ -24,38 +24,38 @@ const UnifiedAuth = () => {
     { id: "student", label: "Student", color: "indigo" },
   ];
 
-  const navigateToProfileCreation = (role) => {
-    switch (role) {
+  const navigateToOnboarding = (userRole) => {
+    switch (userRole) {
       case "company":
-        navigate("/CompanyProfile");
+        navigate("/company/onboarding");
         break;
       case "jobseeker":
-        navigate("/forJob");
+        navigate("/jobseeker/onboarding");
         break;
       case "mentor":
-        navigate("/");
+        navigate("/MentorProfile");
         break;
       case "student":
-        navigate("/create-student-profile");
+        navigate("/student/onboarding");
         break;
       default:
         navigate("/dashboard");
     }
   };
 
-  const navigateAfterLogin = (userRole) => {
+  const navigateToDashboard = (userRole) => {
     switch (userRole) {
       case "jobseeker":
-        navigate("/ForJobs");
+        navigate("/JobDashboard/profile");
         break;
       case "company":
-        navigate("/Process");
+        navigate("/CompanyDashboard");
         break;
       case "mentor":
         navigate("/Mentor");
         break;
       case "student":
-        navigate("/student");
+        navigate("/student/dashboard");
         break;
       default:
         navigate("/dashboard");
@@ -90,6 +90,7 @@ const UnifiedAuth = () => {
           password,
           role: selectedRole,
         });
+
         toast({
           title: "Success",
           description: "Registration successful! Please login to continue.",
@@ -97,7 +98,7 @@ const UnifiedAuth = () => {
           className: "bg-white border-green-200",
         });
         
-        // Clear all fields except email and switch to login
+        // Clear form fields except email and switch to login view
         setName("");
         setPassword("");
         setConfirmPassword("");
@@ -109,6 +110,7 @@ const UnifiedAuth = () => {
         try {
           const loginResponse = await login({ email, password });
           const userRole = loginResponse?.user?.role;
+          const isProfileComplete = loginResponse?.user?.isProfileComplete;
           
           toast({
             title: "Welcome back!",
@@ -117,8 +119,13 @@ const UnifiedAuth = () => {
             className: "bg-white border-green-200",
           });
           
+          // Add small delay to show toast before navigation
           setTimeout(() => {
-            navigateAfterLogin(userRole);
+            if (!isProfileComplete) {
+              navigateToOnboarding(userRole);
+            } else {
+              navigateToDashboard(userRole);
+            }
           }, 1000);
         } catch (error) {
           toast({

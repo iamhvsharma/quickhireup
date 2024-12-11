@@ -132,7 +132,7 @@ const App = () => {
                     element={<UnifiedAuth type="register" />}
                   />
                 </Route>
-                    
+                
               </Routes>
             </Router>
           </AuthProvider>
