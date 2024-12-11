@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import AuthCard from './components/AuthCard';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const UnifiedAuth = ({ type }) => {
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState('');
   const [formData, setFormData] = useState({
     name: '',
@@ -21,6 +23,44 @@ const UnifiedAuth = ({ type }) => {
     { id: 'student', label: 'Student', color: 'indigo' }
   ];
 
+  const navigateToProfileCreation = (role) => {
+    switch (role) {
+      case 'company':
+        navigate('/CompanyProfile');
+        break;
+      case 'jobseeker':
+        navigate('/create-jobseeker-profile');
+        break;
+      case 'mentor':
+        navigate('/create-mentor-profile');
+        break;
+      case 'student':
+        navigate('/create-student-profile');
+        break;
+      default:
+        navigate('/dashboard');
+    }
+  };
+
+  const navigateAfterLogin = (userRole) => {
+    switch (userRole) {
+      case 'jobseeker':
+        navigate('/ForJobs');
+        break;
+      case 'company':
+        navigate('/Process');
+        break;
+      case 'mentor':
+        navigate('/Mentor');
+        break;
+      case 'student':
+        navigate('/student');
+        break;
+      default:
+        navigate('/dashboard');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -34,15 +74,18 @@ const UnifiedAuth = ({ type }) => {
           return;
         }
   
-        // Check if formData and selectedRole are valid
         console.log("Sending request with data:", { ...formData, role: selectedRole });
   
         // Register
         await axios.post('http://localhost:8000/api/auth/signup', { ...formData, role: selectedRole });
-        login({ email: formData.email, password: formData.password });
+        const loginResponse = await login({ email: formData.email, password: formData.password });
+        navigateToProfileCreation(selectedRole);
       } else {
         // Login
-        login({ email: formData.email, password: formData.password });
+        const loginResponse = await login({ email: formData.email, password: formData.password });
+        // Assuming the login response includes the user's role
+        const userRole = loginResponse?.user?.role;
+        navigateAfterLogin(userRole);
       }
     } catch (error) {
       console.error('Error during form submission:', error);
