@@ -2,184 +2,44 @@ import mongoose from "mongoose";
 
 const jobSeekerSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    name: { type: String, required: true },
-    location: { type: String, required: true },
-    currentRole: { type: String, required: true },
-    experienceYears: { type: Number, required: true },
-    isStudentOrNewGrad: { type: Boolean, required: true },
-    currentEmployer: {
-      companyName: { type: String },
-      jobTitle: { type: String },
-      notEmployed: { type: Boolean, default: false },
-    },
-    linkedinProfile: { type: String },
-    website: { type: String },
-    jobSearchStatus: {
-      readyToInterview: { type: Boolean, default: false },
-      openToOffers: { type: Boolean, default: false },
-      closedToOffers: { type: Boolean, default: false },
-    },
-    jobTypeInterest: {
-      fullTime: { type: Boolean, default: false },
-      contractor: { type: Boolean, default: false },
-      intern: { type: Boolean, default: false },
-      coFounder: { type: Boolean, default: false },
-    },
-    desiredSalary: {
-      currency: { type: String, required: true },
-      amount: { type: Number, required: true },
-    },
-    rolePreference: { type: String },
-    preferredLocation: { type: String },
-    openToRemote: { type: Boolean, default: false },
-    companySizePreferences: {
-      seed: { type: String, enum: ["IDEAL", "YES", "NO"] },
-      early: { type: String, enum: ["IDEAL", "YES", "NO"] },
-      midSize: { type: String, enum: ["IDEAL", "YES", "NO"] },
-      large: { type: String, enum: ["IDEAL", "YES", "NO"] },
-      veryLarge: { type: String, enum: ["IDEAL", "YES", "NO"] },
-      massive: { type: String, enum: ["IDEAL", "YES", "NO"] },
-    },
-    interestedTechnologies: [{ type: String, maxlength: 20 }],
-    unwillingTechnologies: [{ type: String, maxlength: 20 }],
-    motivators: {
-      solvingProblems: { type: Boolean, default: false },
-      buildingProducts: { type: Boolean, default: false },
-    },
-    careerTrack: { type: String, enum: ["Individual Contributor", "Manager"] },
-    workEnvironment: {
-      clearResponsibilities: { type: Boolean, default: false },
-      versatileAssignments: { type: Boolean, default: false },
-    },
-    jobPriorities: [{ type: String, maxlength: 50 }],
-    flexibleRemotePolicy: {
-      type: String,
-      enum: ["Very important", "Important", "Not important"],
-    },
-    quietOfficePreference: {
-      type: String,
-      enum: ["Very important", "Important", "Not important"],
-    },
-    nextJobDescription: { type: String, maxlength: 300 },
-    resume: { type: String },
-    emailVerified: { type: Boolean, default: false },
-    verificationCode: { type: String },
-    avatar: { type: String },
-    openRoles: [{ type: String }],
-    bio: { type: String, maxlength: 1000 },
-    experience: [
-      {
-        companyName: { type: String },
-        title: { type: String },
-        startDate: { type: Date },
-        endDate: { type: Date },
-        currentlyWorking: { type: Boolean, default: false },
-        description: { type: String },
-      },
-    ],
-    education: [
-      {
-        institution: { type: String },
-        graduationDate: { type: Date },
-        degreeType: { type: String },
-        specialization: { type: String },
-        cgpaOrPercentage: { type: String },
-      },
-    ],
-    skills: [{ type: String, maxlength: 50 }],
-    achievements: { type: String, maxlength: 1000 },
-    pronouns: { type: String },
-    genderIdentity: { type: String },
-    certifications: [
-      {
-        title: { type: String, required: true },
-        description: { type: String },
-        url: { type: String },
-        issuingOrganization: { type: String, required: true },
-      },
-    ],
-    projects: [
-      {
-        title: { type: String, required: true },
-        description: { type: String },
-        media: [{ type: String, maxlength: 300 }],
-        liveLink: { type: String },
-        githubLink: { type: String },
-        skills: [{ type: String, maxlength: 20 }],
-      },
-    ],
-
-
-    // Add/Update Profile Building fields
-    profileBuildingStatus: {
-      basicInfo: { type: Boolean, default: false },
-      preferences: { type: Boolean, default: false },
-      culture: { type: Boolean, default: false },
-      resume: { type: Boolean, default: false },
-      emailVerified: { type: Boolean, default: false },
-    },
-
-    // Add/Update Basic Info fields
-    basicInfo: {
-      firstName: { type: String },
-      lastName: { type: String },
-      title: { type: String },
-      bio: { type: String, maxlength: 1000 },
-    },
-
-    // Update Job Preferences (extend existing)
+    // Basic Info
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    title: { type: String, required: true },
+    bio: { type: String, required: true },
+    
+    // Preferences
     jobPreferences: {
-      jobType: { 
-        type: String, 
-        enum: ['full-time', 'part-time', 'contract', 'intern'] 
-      },
-      location: { type: String },
-      salary: {
-        amount: { type: Number },
-        currency: { type: String, default: 'USD' }
-      },
-      remote: { type: Boolean, default: false }
+      jobType: { type: String, enum: ['full-time', 'part-time', 'contract'] },
+      location: String,
+      salary: Number,
+      remote: Boolean
     },
 
-    // Add Culture Preferences
-    culturePreferences: {
-      workStyle: {
-        type: String,
-        enum: ['collaborative', 'independent', 'mixed']
-      },
-      teamSize: {
-        type: String,
-        enum: ['small', 'medium', 'large']
-      },
-      companySize: { type: String },
-      industry: { type: String }
+    // Culture
+    culturalPreferences: {
+      workStyle: { type: String, enum: ['collaborative', 'independent', 'mixed'] },
+      teamSize: { type: String, enum: ['small', 'medium', 'large'] },
+      companySize: String,
+      industry: String
     },
 
-    // Update Resume field
+    // Resume
     resume: {
-      url: { type: String },
-      filename: { type: String },
-      uploadDate: { type: Date },
-      fileType: { type: String }
+      url: String,
+      fileName: String
     },
 
-    appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }], // New field for applied jobs
+    // Email verification
+    email: { type: String, required: true, unique: true },
+    isEmailVerified: { type: Boolean, default: false },
+    verificationCode: String,
 
-  },
-  { timestamps: true }
+    // Timestamps
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+  }
 );
-
-// Add a method to check if profile is complete
-jobSeekerSchema.methods.isProfileComplete = function() {
-  return (
-    this.profileBuildingStatus.basicInfo &&
-    this.profileBuildingStatus.preferences &&
-    this.profileBuildingStatus.culture &&
-    this.profileBuildingStatus.resume &&
-    this.profileBuildingStatus.emailVerified
-  );
-};
 
 const JobSeeker = mongoose.model("JobSeeker", jobSeekerSchema);
 

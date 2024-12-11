@@ -30,19 +30,19 @@ import DashboardLayout from "./Component/Job/Dashboard/DashboardLayout";
 import SavedJobs from "./Component/Job/Dashboard/SavedJobs";
 import MyApplications from "./Component/Job/Dashboard/MyApplications";
 import DashboardSettings from "./Component/Job/Dashboard/Settings";
-import AiChatBot from "./Component/AiChatBot/page";
-import StudentDashboard from "./Component/Student/Dashboard/StudentDashboard";
-// import Learning from './Component/Student/Dashboard/Pages/Learning';
-// import Internships from './Component/Student/Dashboard/Pages/Internships';
-// import Profile from './Component/Student/Dashboard/Pages/Profile';
-// import Courses from './Component/Student/Dashboard/Pages/Courses';
-// import Settings from './Component/Student/Dashboard/Pages/Settings';
-// import Help from './Component/Student/Dashboard/Pages/Help';
+
+import AiChatBot from './Component/AiChatBot/page'
+import StudentDashboard from './Component/Student/Dashboard/StudentDashboard'
+import ProfileForm from './Component/Job/Create-Profile/ProfileForm'
+
+
 
 import UnifiedAuth from "./Component/Auth/UnifiedAuth";
 import ApplicationDetails from "./Component/Company/Dashboard/Applications/ApplicationDetails";
 import { AuthProvider } from "./Component/Auth/context/AuthContext";
 import { Toaster } from "./components/ui/toaster";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // In your routes configuration:
 
@@ -52,43 +52,35 @@ const App = () => {
       <StudentProfileProvider>
         <JobPreferencesProvider>
           <AuthProvider>
-            <Router>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route
-                  path="/student/onboarding"
-                  element={<StudentProfileWizard />}
-                />
-                <Route
-                  path="/jobseeker/onboarding"
-                  element={<BuildProfile />}
-                ></Route>
-                <Route path="/resume" element={<Resume />} />
-                {/* <Route path="/company" element={<Company />} /> */}
-                <Route path="/company/onboarding" element={<OnBoard />} />
-                <Route path="/register" element={<Jobs />} />
-                <Route path="/CreateProfile" element={<CreateProfile />} />
-                <Route path="/WelcomePage" element={<Welcome />} />
-                <Route path="/FindTalent" element={<FindTalent />} />
-                <Route path="/PostJob" element={<PostJob />} />
-                <Route path="/CompanyProfile" element={<CompanyProfile />} />
-                <Route
-                  path="/StudentDashboard"
-                  element={<StudentDashboard />}
-                />
-                <Route path="/Mentor" element={<Mentor />} />
-                <Route path="/become-Mentor" element={<BecomeMentorForm />} />
-                <Route path="/MentorProfile" element={<MentorProfileForm />} />
-                <Route path="/AiResume" element={<AiResume />} />
-                <Route path="/JobList" element={<JobListings />} />
-                <Route path="/AiMock" element={<AiMock />} />
-                <Route path="/AiChatBot" element={<AiChatBot />} />
-                {/* <Route path="/JobAuth" element={<JobAuth/>} /> */}
-                {/* <Route path="/MentorAuth" element={<MentorAuth/>} /> */}
-                <Route
-                  path="/CompanyDashboard"
-                  element={<CompnayDashboard />}
-                />
+
+          <Router>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/student/onboarding" element={<StudentProfileWizard />} />
+              <Route path="/jobseeker/onboarding" element={<BuildProfile />}></Route>
+              <Route path="/resume" element={<Resume />} />
+              {/* <Route path="/company" element={<Company />} /> */}
+              <Route path="/company/onboarding" element={<OnBoard />} />
+              <Route path="/register" element={<Jobs />} />
+              <Route path="/CreateProfile" element={<CreateProfile />} />
+              <Route path="/WelcomePage" element={<Welcome />} />
+              <Route path="/FindTalent" element={<FindTalent />} />
+              <Route path="/PostJob" element={<PostJob />} />
+              <Route path="/CompanyProfile" element={<CompanyProfile />} />
+              <Route path="/StudentDashboard" element={<StudentDashboard />} />
+           
+              <Route path="/Mentor" element={<Mentor />} />
+              <Route path="/become-Mentor" element={<BecomeMentorForm />} />
+              <Route path="/MentorProfile" element={<MentorProfileForm />}/>
+              <Route path="/AiResume" element={<AiResume />} />
+              <Route path="/JobList" element={<JobListings />} />
+              <Route path="/AiMock" element={<AiMock/>} />
+              <Route path="/AiChatBot" element={<AiChatBot/>} />
+
+
+                <Route path="/create-profile" element={<ProfileForm />} />             
+                <Route path="/CompanyDashboard" element={<CompnayDashboard/>} />
+
                 <Route path="/jobs" element={<JobsPage />} />
                 <Route path="/applications" element={<ApplicationsPage />} />
                 <Route path="/MentorList" element={<MentorList />} />
@@ -121,11 +113,9 @@ const App = () => {
                   <Route path="settings" element={<Settings />} />
                   <Route path="help" element={<Help />} /> */}
                 </Route>
-                <Route
-                  path="/company/applications/:id"
-                  element={<ApplicationDetails />}
-                />
-                <Route path="/Auth">
+
+                <Route path="/company/applications/:id" element={<ApplicationDetails />} />
+  <Route path="/Auth">
                   <Route path="login" element={<UnifiedAuth type="login" />} />
                   <Route
                     path="register"
@@ -135,10 +125,13 @@ const App = () => {
                 
               </Routes>
             </Router>
-          </AuthProvider>
-        </JobPreferencesProvider>
-      </StudentProfileProvider>
+
+            </AuthProvider>
+          </JobPreferencesProvider>
+        </StudentProfileProvider>
+
       <Toaster />
+      <ToastContainer position="top-right" />
     </>
   );
 };
