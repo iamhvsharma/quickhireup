@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import JobListCard from './JobListingCard';
-import axios from 'axios';
+import { jobsData } from './JobsData';
 import { SearchIcon, LocationMarkerIcon } from '@heroicons/react/outline';
-import { toast } from 'react-hot-toast';
 
 const JobList = () => {
   // State management
@@ -23,8 +22,6 @@ const JobList = () => {
   });
   const [selectedTags, setSelectedTags] = useState(new Set());
   const [showSavedOnly, setShowSavedOnly] = useState(false);
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Update localStorage whenever savedJobs changes
   useEffect(() => {
@@ -65,53 +62,40 @@ const JobList = () => {
     });
   };
 
-  // Fetch jobs from backend
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/api/jobs/all');
-        if (response.data.success) {
-          setJobs(response.data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching jobs:', error);
-        toast.error('Failed to fetch jobs');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobs();
-  }, []);
-
   // Filter jobs based on all criteria
   const filteredJobs = useMemo(() => {
-    return jobs.filter(job => {
+    return jobsData.filter(job => {
       // Search by keyword (job title, company name)
       const keywordMatch = !searchTerms.keyword || 
         job.jobTitle.toLowerCase().includes(searchTerms.keyword.toLowerCase()) ||
-        job.organizationName.toLowerCase().includes(searchTerms.keyword.toLowerCase());
+        job.companyName.toLowerCase().includes(searchTerms.keyword.toLowerCase());
 
       // Search by location
       const locationMatch = !searchTerms.location ||
-        job.workType.toLowerCase().includes(searchTerms.location.toLowerCase());
+        job.location.toLowerCase().includes(searchTerms.location.toLowerCase());
 
       // Search by company
       const companyMatch = !searchTerms.company ||
-        job.organizationName.toLowerCase().includes(searchTerms.company.toLowerCase());
+        job.companyName.toLowerCase().includes(searchTerms.company.toLowerCase());
 
       // Filter by employment type
       const employmentMatch = (
-        (!filters.fulltime || job.jobType === 'full-time') &&
-        (!filters.remote || job.workType === 'Work from home')
+        (!filters.fulltime || job.tags.includes('Full-time')) &&
+        (!filters.seniorLevel || job.tags.includes('Senior level')) &&
+        (!filters.remote || job.tags.includes('Remote')) &&
+        (!filters.contract || job.tags.includes('Contract'))
       );
 
-      // Saved jobs filter
-      const savedMatch = !showSavedOnly || savedJobs.has(job._id);
+      // Updated tag matching logic for multiple tags
+      const tagMatch = selectedTags.size === 0 || 
+        [...selectedTags].some(tag => job.tags.includes(tag));
 
-      return keywordMatch && locationMatch && companyMatch && employmentMatch && savedMatch;
+      // Saved jobs filter
+      const savedMatch = !showSavedOnly || savedJobs.has(job.id);
+
+      return keywordMatch && locationMatch && companyMatch && employmentMatch && tagMatch && savedMatch;
     });
-  }, [searchTerms, filters, savedJobs, showSavedOnly, jobs]);
+  }, [searchTerms, filters, selectedTags, savedJobs, showSavedOnly]);
 
   // Available tags for the tag bar
   const tags = [
@@ -241,25 +225,13 @@ const JobList = () => {
         {/* Jobs List */}
         <div className="flex-1">
           <div className="space-y-4">
-            {loading ? (
-              <div className="text-center py-10">
-                <p>Loading jobs...</p>
-              </div>
-            ) : filteredJobs.length > 0 ? (
+            {filteredJobs.length > 0 ? (
               filteredJobs.map((job) => (
                 <JobListCard
-                  key={job._id}
-                  id={job._id}
-                  jobTitle={job.jobTitle}
-                  companyName={job.organizationName}
-                  location={job.workType}
-                  salary={job.stipend}
-                  description={job.description}
-                  tags={[job.jobType, job.workType]}
-                  isSaved={savedJobs.has(job._id)}
-                  onSave={() => handleSaveJob(job._id)}
-                  applyBy={job.applyBy}
-                  duration={job.duration}
+                  key={job.id}
+                  {...job}
+                  isSaved={savedJobs.has(job.id)}
+                  onSave={() => handleSaveJob(job.id)}
                 />
               ))
             ) : (
