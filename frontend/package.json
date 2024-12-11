@@ -68,7 +68,7 @@
     "tailwindcss": "^3.4.15",
     "vite": "^5.4.10"
   },
-  "proxy" : {
+  "proxy": {
     "/api": {
       "target": "http://localhost:8000",
       "changeOrigin": true,

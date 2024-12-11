@@ -38,22 +38,22 @@ const Navbar = () => {
       {/* Links Section */}
       <ul className="hidden md:flex space-x-8 text-sm text-gray-600">
         <li>
-          <Link to="/auth/login" className="hover:text-blue-700">
+          <Link to="/auth/register" className="hover:text-blue-700">
             Jobs
           </Link>
         </li>
         <li>
-          <Link to="/auth/login" className="hover:text-blue-700">
+          <Link to="/auth/register" className="hover:text-blue-700">
             Companies
           </Link>
         </li>
         <li>
-          <Link to="/auth/login" className="hover:text-blue-700">
+          <Link to="/auth/register" className="hover:text-blue-700">
             Students
           </Link>
         </li>
         <li>
-          <Link to="/auth/login" className="hover:text-blue-700">
+          <Link to="/auth/register" className="hover:text-blue-700">
             Mentors
           </Link>
         </li>
