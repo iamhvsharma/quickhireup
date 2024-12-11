@@ -3,6 +3,10 @@ import { app } from "./app.js";
 import mongoose, { connect } from "mongoose";
 import { DB_NAME } from "./constants.js";
 import connectDB from "./db/index.js";
+import express from 'express';
+import cors from 'cors';
+import path from 'path';
+import jobSeekerRoutes from './routes/jobseeker.routes.js';
 
 dotenv.config({
   path: "./env",
@@ -50,3 +54,4 @@ async () => {
   }
 };
 */
+

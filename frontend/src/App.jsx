@@ -32,17 +32,14 @@ import MyApplications from "./Component/Job/Dashboard/MyApplications";
 import DashboardSettings from "./Component/Job/Dashboard/Settings";
 import AiChatBot from './Component/AiChatBot/page'
 import StudentDashboard from './Component/Student/Dashboard/StudentDashboard'
-// import Learning from './Component/Student/Dashboard/Pages/Learning';
-// import Internships from './Component/Student/Dashboard/Pages/Internships';
-// import Profile from './Component/Student/Dashboard/Pages/Profile';
-// import Courses from './Component/Student/Dashboard/Pages/Courses';
-// import Settings from './Component/Student/Dashboard/Pages/Settings';
-// import Help from './Component/Student/Dashboard/Pages/Help';
+import ProfileForm from './Component/Job/Create-Profile/ProfileForm'
 
 import UnifiedAuth from "./Component/Auth/UnifiedAuth";
 import ApplicationDetails from "./Component/Company/Dashboard/Applications/ApplicationDetails";
 import { AuthProvider } from "./Component/Auth/context/AuthContext";
 import { Toaster } from "./components/ui/toaster";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // In your routes configuration:
 
@@ -82,8 +79,7 @@ const App = () => {
               <Route path="/AiChatBot" element={<AiChatBot/>} />
 
 
-                {/* <Route path="/JobAuth" element={<JobAuth/>} /> */}
-                {/* <Route path="/MentorAuth" element={<MentorAuth/>} /> */}
+                <Route path="/create-profile" element={<ProfileForm />} />             
                 <Route path="/CompanyDashboard" element={<CompnayDashboard/>} />
                 <Route path="/jobs" element={<JobsPage />} />
                 <Route path="/applications" element={<ApplicationsPage />} />
@@ -112,19 +108,6 @@ const App = () => {
                   <Route path="help" element={<Help />} /> */}
                 </Route>
                 <Route path="/company/applications/:id" element={<ApplicationDetails />} />
-
-            
-
-   
-
-            </Routes>
-           
-          </Router>
-          </AuthProvider>
-        </JobPreferencesProvider>
-      </StudentProfileProvider>
-   
-
                 <Route path="/Auth">
                   <Route path="login" element={<UnifiedAuth type="login" />} />
                   <Route path="register" element={<UnifiedAuth type="register" />} />
@@ -134,10 +117,12 @@ const App = () => {
              
               </Routes>
             </Router>
+            </AuthProvider>
           </JobPreferencesProvider>
         </StudentProfileProvider>
-      </AuthProvider>
+
       <Toaster />
+      <ToastContainer position="top-right" />
     </>
 
   );

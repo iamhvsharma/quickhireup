@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useJobPreferences } from "@/contexts/JobPreferencesContext";
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 // ProgressSteps Component
 const ProgressSteps = ({ currentStep }) => {
@@ -53,9 +55,15 @@ const ProfileCreation = ({ onNext, onBack }) => {
     bio: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onNext();
+    try {
+      await axios.post('/api/jobseeker/profile/basic', formData);
+      toast.success('Basic info saved successfully');
+      onNext();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save basic info');
+    }
   };
 
   return (
@@ -122,10 +130,16 @@ const PreferencesForm = ({ onNext, onBack }) => {
     remote: jobPreferences.remote || false,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    updateJobPreferences(preferences);
-    onNext();
+    try {
+      await axios.post('/api/jobseeker/profile/preferences', preferences);
+      updateJobPreferences(preferences);
+      toast.success('Preferences saved successfully');
+      onNext();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save preferences');
+    }
   };
 
   return (
@@ -201,9 +215,15 @@ const CultureTab = ({ onNext, onBack }) => {
     industry: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onNext();
+    try {
+      await axios.post('/api/jobseeker/profile/culture', values);
+      toast.success('Cultural preferences saved successfully');
+      onNext();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save cultural preferences');
+    }
   };
 
   return (
@@ -264,10 +284,22 @@ const Resume = ({ onNext, onBack }) => {
     setFile(selectedFile);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle file upload logic here
-    onNext();
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    try {
+      await axios.post('/api/jobseeker/profile/resume', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      toast.success('Resume uploaded successfully');
+      onNext();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to upload resume');
+    }
   };
 
   return (
@@ -306,10 +338,15 @@ const Resume = ({ onNext, onBack }) => {
 const EmailVerification = ({ onNext, onBack }) => {
   const [verificationCode, setVerificationCode] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle verification logic here
-    onNext();
+    try {
+      await axios.post('/api/jobseeker/profile/verify-email', { verificationCode });
+      toast.success('Email verified successfully');
+      onNext();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to verify email');
+    }
   };
 
   return (
