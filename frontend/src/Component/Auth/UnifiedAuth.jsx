@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import AuthCard from './components/AuthCard';
+import axios from 'axios';
 
 const UnifiedAuth = ({ type }) => {
   const [selectedRole, setSelectedRole] = useState('');
@@ -20,20 +21,35 @@ const UnifiedAuth = ({ type }) => {
     { id: 'student', label: 'Student', color: 'indigo' }
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (type === 'register') {
-      if (formData.password !== formData.confirmPassword) {
-        alert("Passwords don't match!");
-        return;
+    try {
+      if (type === 'register') {
+        if (formData.password !== formData.confirmPassword) {
+          alert("Passwords don't match!");
+          return;
+        }
+        if (!selectedRole) {
+          alert("Please select a role.");
+          return;
+        }
+  
+        // Check if formData and selectedRole are valid
+        console.log("Sending request with data:", { ...formData, role: selectedRole });
+  
+        // Register
+        await axios.post('http://localhost:8000/api/auth/signup', { ...formData, role: selectedRole });
+        login({ email: formData.email, password: formData.password });
+      } else {
+        // Login
+        login({ email: formData.email, password: formData.password });
       }
-      // For registration, include all fields
-      login({ ...formData, role: selectedRole });
-    } else {
-      // For login, only include email and password
-      login({ email: formData.email, password: formData.password });
+    } catch (error) {
+      console.error('Error during form submission:', error);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
+  
 
   return (
     <AuthCard title={type === 'login' ? 'Login' : 'Register'}>
