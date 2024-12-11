@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const cards = [
   { gradient: "from-purple-600 to-pink-500" },
@@ -9,8 +9,54 @@ const cards = [
 ];
 
 export default function InfiniteScrollCards() {
-  // Double the cards array to ensure smooth infinite loop
-  const doubledCards = [...cards, ...cards];
+  const containerRef = useRef(null);
+  
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scrollContent = container.querySelector('.scroll-content');
+    const clone = scrollContent.cloneNode(true);
+    container.appendChild(clone);
+
+    let animationId;
+    let lastTime = 0;
+    const speed = 0.05; // Pixels per millisecond
+
+    const animate = (currentTime) => {
+      if (lastTime === 0) {
+        lastTime = currentTime;
+      }
+      const deltaTime = currentTime - lastTime;
+      
+      if (container.scrollLeft >= scrollContent.scrollWidth) {
+        container.scrollLeft = 0;
+      } else {
+        container.scrollLeft += speed * deltaTime;
+      }
+      
+      lastTime = currentTime;
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+
+    const pauseAnimation = () => cancelAnimationFrame(animationId);
+    const resumeAnimation = () => {
+      cancelAnimationFrame(animationId);
+      lastTime = 0;
+      animationId = requestAnimationFrame(animate);
+    };
+
+    container.addEventListener('mouseenter', pauseAnimation);
+    container.addEventListener('mouseleave', resumeAnimation);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      container.removeEventListener('mouseenter', pauseAnimation);
+      container.removeEventListener('mouseleave', resumeAnimation);
+    };
+  }, []);
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -21,9 +67,12 @@ export default function InfiniteScrollCards() {
       <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-[#FBFAFD] to-transparent z-20 pointer-events-none" />
       
       {/* Scrolling container */}
-      <div className="flex overflow-hidden">
-        <div className="flex animate-scroll hover:pause">
-          {doubledCards.map((card, index) => (
+      <div 
+        ref={containerRef}
+        className="flex overflow-x-hidden"
+      >
+        <div className="flex scroll-content">
+          {cards.map((card, index) => (
             <div
               key={index}
               className={`relative flex-shrink-0 w-[400px] h-[250px] m-4 rounded-xl overflow-hidden
@@ -31,8 +80,8 @@ export default function InfiniteScrollCards() {
                 bg-gradient-to-br ${card.gradient} shadow-lg hover:shadow-xl`}
             >
               <img 
-                src={`/placeholder.svg?height=250&width=400&text=Image ${(index % cards.length) + 1}`} 
-                alt={`Placeholder ${(index % cards.length) + 1}`}
+                src={`/placeholder.svg?height=250&width=400&text=Image ${index + 1}`} 
+                alt={`Placeholder ${index + 1}`}
                 className="w-full h-full object-cover"
               />
               {/* White overlay on hover */}
