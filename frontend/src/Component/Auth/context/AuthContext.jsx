@@ -6,18 +6,24 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = async (formData) => {
+  const login = async (credentials) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', formData);
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
-      console.log('Login successful:', user);
-      return response.data;
+      const response = await axios.post('http://localhost:8000/api/auth/login', credentials);
+      if (response.data) {
+        const userData = {
+          ...response.data,
+          user: {
+            ...response.data.user,
+            isProfileComplete: response.data.user?.isProfileComplete ?? false,
+            role: response.data.user?.role
+          }
+        };
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return userData;
+      }
     } catch (error) {
-      console.error('Login failed:', error);
-      alert(`Login failed: ${error.response?.data?.message || error.message}`);
-      throw error;
+      throw new Error(error.response?.data?.message || 'Login failed');
     }
   };
 
