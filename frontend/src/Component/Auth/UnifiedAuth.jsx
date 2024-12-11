@@ -3,7 +3,7 @@ import { useAuth } from "./context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "../../hooks/use-toast";
 import axios from "axios";
-import { BackgroundDashboard } from "@/components/ui/Background";
+import  Background  from "@/components/ui/Background";
 
 const UnifiedAuth = () => {
   const navigate = useNavigate();
