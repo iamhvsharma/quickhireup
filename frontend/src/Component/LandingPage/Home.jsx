@@ -5,7 +5,7 @@ import nodeIcon from '../../assets/icons/nodejs.svg';
 import mongodbIcon from '../../assets/icons/mongodb.svg';
 
 import bitcoinIcon from '../../assets/icons/lightroom.svg';
-import { Background } from "@/components/ui/Background";
+import { BackgroundLanding } from "@/components/ui/Background";
 
 const Home = () => {
   
@@ -35,7 +35,7 @@ const Home = () => {
 
   return (
     <div className="relative md:min-h-max h-max">
-      <Background />
+      <BackgroundLanding />
       <div
         className="flex flex-col items-center justify-center py-12 relative"
         onMouseMove={handleMouseMove}
