@@ -60,13 +60,10 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="w-screen px-11">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <img src="/logo.png" alt="Logo" className="h-8 w-auto" />
-              <span className="ml-2 text-xl font-bold">QuickHireUp</span>
-            </Link>
+            
             
             <div className="hidden md:flex items-center space-x-8 ml-10">
               <Link to="/" className="flex items-center text-gray-600 hover:text-blue-500">
@@ -152,4 +149,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

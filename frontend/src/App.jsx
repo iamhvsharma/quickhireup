@@ -40,6 +40,7 @@ import StudentDashboard from './Component/Student/Dashboard/StudentDashboard'
 // import Help from './Component/Student/Dashboard/Pages/Help';
 
 import UnifiedAuth from "./Component/Auth/UnifiedAuth";
+import ApplicationDetails from "./Component/Company/Dashboard/Applications/ApplicationDetails";
 import { AuthProvider } from "./Component/Auth/context/AuthContext";
 // In your routes configuration:
 
@@ -108,8 +109,10 @@ const App = () => {
                 <Route path="register" element={<UnifiedAuth type="register" />} />
               </Route>
 
-             
-            
+              <Route path="/company/applications/:id" element={<ApplicationDetails />} />
+
+   
+
             </Routes>
            
           </Router>

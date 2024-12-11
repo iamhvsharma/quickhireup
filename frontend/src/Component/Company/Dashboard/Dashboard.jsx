@@ -1,14 +1,35 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import StatsCard from './StatsCard';
 import FeatureCard from './FeatureCard';
 import ActivityFeed from './ActivityFeed';
 import { Bell, Settings, Search, Calendar } from 'lucide-react';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const applicantStats = [
-    { label: 'Total Applicants', value: 1234, trend: '+12%', color: 'text-green-500' },
-    { label: 'Shortlisted', value: 56, trend: '+5%', color: 'text-blue-500' },
-    { label: 'Interviews', value: 23, trend: '+8%', color: 'text-purple-500' },
+    { 
+      label: 'Total Applicants', 
+      value: 1234, 
+      trend: '+12%', 
+      color: 'text-green-500',
+      link: '/company/applications?status=all'
+    },
+    { 
+      label: 'Shortlisted', 
+      value: 56, 
+      trend: '+5%', 
+      color: 'text-blue-500',
+      link: '/company/applications?status=shortlisted'
+    },
+    { 
+      label: 'Interviews', 
+      value: 23, 
+      trend: '+8%', 
+      color: 'text-purple-500',
+      link: '/company/applications?status=interview'
+    },
   ];
 
   const sourcingStats = [
@@ -46,6 +67,10 @@ const Dashboard = () => {
       buttonAction: () => console.log("Invite team members clicked")
     }
   ];
+
+  const handleStatClick = (link) => {
+    navigate(link);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -107,10 +132,16 @@ const Dashboard = () => {
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Applicant Overview</h3>
             <div className="grid grid-cols-3 gap-4">
               {applicantStats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
-                  <span className={`text-xs ${stat.color}`}>{stat.trend}</span>
+                <div 
+                  key={index} 
+                  className="text-center cursor-pointer transform transition-transform hover:scale-105"
+                  onClick={() => handleStatClick(stat.link)}
+                >
+                  <div className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100">
+                    <p className="text-2xl font-bold">{stat.value}</p>
+                    <p className="text-sm text-gray-500">{stat.label}</p>
+                    <span className={`text-xs ${stat.color}`}>{stat.trend}</span>
+                  </div>
                 </div>
               ))}
             </div>
