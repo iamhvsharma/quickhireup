@@ -109,10 +109,77 @@ const jobSeekerSchema = new mongoose.Schema(
         skills: [{ type: String, maxlength: 20 }],
       },
     ],
+
+
+    // Add/Update Profile Building fields
+    profileBuildingStatus: {
+      basicInfo: { type: Boolean, default: false },
+      preferences: { type: Boolean, default: false },
+      culture: { type: Boolean, default: false },
+      resume: { type: Boolean, default: false },
+      emailVerified: { type: Boolean, default: false },
+    },
+
+    // Add/Update Basic Info fields
+    basicInfo: {
+      firstName: { type: String },
+      lastName: { type: String },
+      title: { type: String },
+      bio: { type: String, maxlength: 1000 },
+    },
+
+    // Update Job Preferences (extend existing)
+    jobPreferences: {
+      jobType: { 
+        type: String, 
+        enum: ['full-time', 'part-time', 'contract', 'intern'] 
+      },
+      location: { type: String },
+      salary: {
+        amount: { type: Number },
+        currency: { type: String, default: 'USD' }
+      },
+      remote: { type: Boolean, default: false }
+    },
+
+    // Add Culture Preferences
+    culturePreferences: {
+      workStyle: {
+        type: String,
+        enum: ['collaborative', 'independent', 'mixed']
+      },
+      teamSize: {
+        type: String,
+        enum: ['small', 'medium', 'large']
+      },
+      companySize: { type: String },
+      industry: { type: String }
+    },
+
+    // Update Resume field
+    resume: {
+      url: { type: String },
+      filename: { type: String },
+      uploadDate: { type: Date },
+      fileType: { type: String }
+    },
+
     appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }], // New field for applied jobs
+
   },
   { timestamps: true }
 );
+
+// Add a method to check if profile is complete
+jobSeekerSchema.methods.isProfileComplete = function() {
+  return (
+    this.profileBuildingStatus.basicInfo &&
+    this.profileBuildingStatus.preferences &&
+    this.profileBuildingStatus.culture &&
+    this.profileBuildingStatus.resume &&
+    this.profileBuildingStatus.emailVerified
+  );
+};
 
 const JobSeeker = mongoose.model("JobSeeker", jobSeekerSchema);
 

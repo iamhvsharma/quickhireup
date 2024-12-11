@@ -81,6 +81,7 @@ const UnifiedAuth = ({ type = 'login' }) => {
           description: "Login successful!",
           duration: 3000,
         });
+
         navigateAfterLogin(loginResponse?.user?.role);
       }
     } catch (error) {
@@ -89,12 +90,14 @@ const UnifiedAuth = ({ type = 'login' }) => {
         variant: "destructive",
         title: "Error!",
         description: error.response?.data?.message || error.message,
+
         duration: 3000,
       });
     }
   };
 
   return (
+
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-6">
@@ -230,6 +233,7 @@ const UnifiedAuth = ({ type = 'login' }) => {
         </div>
       </div>
     </div>
+
   );
 };
 
