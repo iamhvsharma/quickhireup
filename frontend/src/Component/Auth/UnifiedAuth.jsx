@@ -46,23 +46,23 @@ const UnifiedAuth = ({ type }) => {
 
   const navigateAfterLogin = (userRole) => {
     switch (userRole) {
-      case 'jobseeker':
-        navigate('/ForJobs');
-        break;
       case 'company':
-        navigate('/Process');
+        navigate('/company/onboarding');
+        break;
+      case 'jobseeker':
+        navigate('/jobseeker/onboarding');
         break;
       case 'mentor':
-        navigate('/Mentor');
+        navigate('/mentor/onboarding');
         break;
       case 'student':
-        navigate('/student');
+        navigate('/student/onboarding');
         break;
       default:
         navigate('/dashboard');
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

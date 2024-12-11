@@ -47,33 +47,39 @@ import { Toaster } from "./components/ui/toaster";
 
 const App = () => {
   return (
+
     <>
-      <AuthProvider>
-        <StudentProfileProvider>
-          <JobPreferencesProvider>
-            <Router>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/student" element={<StudentProfileWizard />} />
-                <Route path="/ForJobs" element={<BuildProfile />}></Route>
-                <Route path="/resume" element={<Resume />} />
-                {/* <Route path="/company" element={<Company />} /> */}
-                <Route path="/Process" element={<OnBoard />} />
-                <Route path="/register" element={<Jobs />} />
-                <Route path="/CreateProfile" element={<CreateProfile />} />
-                <Route path="/WelcomePage" element={<Welcome />} />
-                <Route path="/FindTalent" element={<FindTalent />} />
-                <Route path="/PostJob" element={<PostJob />} />
-                <Route path="/CompanyProfile" element={<CompanyProfile />} />
-                <Route path="/StudentDashboard" element={<StudentDashboard />} />
-             
-                <Route path="/Mentor" element={<Mentor />} />
-                <Route path="/become-Mentor" element={<BecomeMentorForm />} />
-                <Route path="/MentorProfile" element={<MentorProfileForm />}/>
-                <Route path="/AiResume" element={<AiResume />} />
-                <Route path="/JobList" element={<JobListings />} />
-                <Route path="/AiMock" element={<AiMock/>} />
-                <Route path="/AiChatBot" element={<AiChatBot/>} />
+     
+       
+
+    
+      <StudentProfileProvider>
+        <JobPreferencesProvider>
+          <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/student/onboarding" element={<StudentProfileWizard />} />
+              <Route path="/jobseeker/onboarding" element={<BuildProfile />}></Route>
+              <Route path="/resume" element={<Resume />} />
+              {/* <Route path="/company" element={<Company />} /> */}
+              <Route path="/company/onboarding" element={<OnBoard />} />
+              <Route path="/register" element={<Jobs />} />
+              <Route path="/CreateProfile" element={<CreateProfile />} />
+              <Route path="/WelcomePage" element={<Welcome />} />
+              <Route path="/FindTalent" element={<FindTalent />} />
+              <Route path="/PostJob" element={<PostJob />} />
+              <Route path="/CompanyProfile" element={<CompanyProfile />} />
+              <Route path="/StudentDashboard" element={<StudentDashboard />} />
+           
+              <Route path="/Mentor" element={<Mentor />} />
+              <Route path="/become-Mentor" element={<BecomeMentorForm />} />
+              <Route path="/MentorProfile" element={<MentorProfileForm />}/>
+              <Route path="/AiResume" element={<AiResume />} />
+              <Route path="/JobList" element={<JobListings />} />
+              <Route path="/AiMock" element={<AiMock/>} />
+              <Route path="/AiChatBot" element={<AiChatBot/>} />
+
 
                 {/* <Route path="/JobAuth" element={<JobAuth/>} /> */}
                 {/* <Route path="/MentorAuth" element={<MentorAuth/>} /> */}
