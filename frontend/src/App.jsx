@@ -47,6 +47,7 @@ import { Toaster } from "./components/ui/toaster";
 
 const App = () => {
   return (
+
     <>
       <AuthProvider>
         <StudentProfileProvider>
@@ -65,18 +66,15 @@ const App = () => {
                 <Route path="/FindTalent" element={<FindTalent />} />
                 <Route path="/PostJob" element={<PostJob />} />
                 <Route path="/CompanyProfile" element={<CompanyProfile />} />
-                <Route
-                  path="/StudentDashboard"
-                  element={<StudentDashboard />}
-                />
-
+                <Route path="/StudentDashboard" element={<StudentDashboard />} />
+             
                 <Route path="/Mentor" element={<Mentor />} />
                 <Route path="/become-Mentor" element={<BecomeMentorForm />} />
-                <Route path="/MentorProfile" element={<MentorProfileForm />} />
+                <Route path="/MentorProfile" element={<MentorProfileForm />}/>
                 <Route path="/AiResume" element={<AiResume />} />
                 <Route path="/JobList" element={<JobListings />} />
-                <Route path="/AiMock" element={<AiMock />} />
-                <Route path="/AiChatBot" element={<AiChatBot />} />
+                <Route path="/AiMock" element={<AiMock/>} />
+                <Route path="/AiChatBot" element={<AiChatBot/>} />
 
                 {/* <Route path="/JobAuth" element={<JobAuth/>} /> */}
                 {/* <Route path="/MentorAuth" element={<MentorAuth/>} /> */}
