@@ -2,63 +2,74 @@ import React, { useState } from 'react';
 import { BookmarkIcon as BookmarkOutlineIcon } from '@heroicons/react/outline';
 import { BookmarkIcon as BookmarkSolidIcon } from '@heroicons/react/solid';
 
-const JobListCard = ({
-  id,
-  jobTitle,
+const JobCard = ({ 
+  companyLogo,
   companyName,
-  location,
-  salary,
-  description,
+  jobTitle,
   tags,
-  isSaved,
-  onSave,
-  applyBy,
-  duration
+  location,
+  postedTime,
+  onSave
 }) => {
+  const [isSaved, setIsSaved] = useState(false);
+
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900">{jobTitle}</h2>
-          <p className="text-gray-600">{companyName}</p>
+    <div className="p-4 border rounded-lg hover:shadow-md transition-shadow flex justify-between items-start gap-4">
+      {/* Left section with logo and job details */}
+      <div className="flex gap-4">
+        {/* Company logo */}
+        <div className="w-12 h-12">
+          <img 
+            src={companyLogo} 
+            alt={`${companyName} logo`}
+            className="w-full h-full object-contain rounded"
+          />
         </div>
-        <button
-          onClick={() => onSave(id)}
-          className={`p-2 rounded-full ${
-            isSaved ? 'text-blue-600' : 'text-gray-400'
-          } hover:bg-gray-100`}
-        >
-          {/* Your save icon */}
-        </button>
-      </div>
 
-      <div className="mb-4">
-        <p className="text-gray-700">{description}</p>
-      </div>
+        {/* Job information */}
+        <div className="flex flex-col gap-2">
+          <div>
+            <p className="text-sm text-gray-600">{companyName}</p>
+            <h2 className="text-lg font-semibold">{jobTitle}</h2>
+          </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+          {/* Tags section */}
+          <div className="flex gap-2">
+            {tags.map((tag, index) => (
+              <span 
+                key={index}
+                className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
 
-      <div className="flex justify-between items-center text-sm text-gray-600">
-        <div className="flex items-center gap-4">
-          <span>{location}</span>
-          <span>{salary}</span>
-          <span>{duration} months</span>
-        </div>
-        <div>
-          Apply by: {new Date(applyBy).toLocaleDateString()}
+          {/* Location and time */}
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>{location}</span>
+            <span>•</span>
+            <span>{postedTime}</span>
+          </div>
         </div>
       </div>
+
+      {/* Save button */}
+      <button 
+        onClick={() => {
+          setIsSaved(!isSaved);
+          onSave();
+        }}
+        className="p-2 hover:bg-gray-100 rounded-full"
+      >
+        {isSaved ? (
+          <BookmarkSolidIcon className="w-5 h-5 text-blue-500" />
+        ) : (
+          <BookmarkOutlineIcon className="w-5 h-5 text-gray-600" />
+        )}
+      </button>
     </div>
   );
 };
 
-export default JobListCard;
+export default JobCard;
