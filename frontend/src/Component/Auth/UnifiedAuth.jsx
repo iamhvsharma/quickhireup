@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext';
 import AuthCard from './components/AuthCard';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { useToast } from '../../hooks/use-toast';
 
 const UnifiedAuth = ({ type }) => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const UnifiedAuth = ({ type }) => {
   });
 
   const { login } = useAuth();
+  const { toast } = useToast();
 
   const roles = [
     { id: 'jobseeker', label: 'Job Seeker', color: 'blue' },
@@ -66,32 +68,53 @@ const UnifiedAuth = ({ type }) => {
     try {
       if (type === 'register') {
         if (formData.password !== formData.confirmPassword) {
-          alert("Passwords don't match!");
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Passwords don't match!",
+            duration: 3000,
+          });
           return;
         }
         if (!selectedRole) {
-          alert("Please select a role.");
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Please select a role.",
+            duration: 3000,
+          });
           return;
         }
 
-        console.log("Sending request with data:", { ...formData, role: selectedRole });
-
         // Register
         await axios.post('http://localhost:8000/api/auth/signup', { ...formData, role: selectedRole });
-        alert("Registration successful!");
-        const loginResponse = await login({ email: formData.email, password: formData.password });
+        toast({
+          title: "Success!",
+          description: "Registration successful!",
+          duration: 3000,
+        });
+        await login({ email: formData.email, password: formData.password });
         navigateToProfileCreation(selectedRole);
       } else {
         // Login
         const loginResponse = await login({ email: formData.email, password: formData.password });
-        alert("Login successful!");
+        toast({
+          title: "Success!",
+          description: "Login successful!",
+          duration: 3000,
+        });
         const userRole = loginResponse?.user?.role;
         navigateAfterLogin(userRole);
       }
     } catch (error) {
       console.error('Error during form submission:', error);
       const errorMessage = error.response?.data?.message || error.message;
-      alert(`Error: ${errorMessage}`);
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: errorMessage,
+        duration: 3000,
+      });
     }
   };
 
@@ -188,7 +211,7 @@ const UnifiedAuth = ({ type }) => {
           {/* Redirect Links */}
           {type === 'register' && (
             <p className="text-center text-sm text-gray-600">
-              Already have an account? <Link to="/login" className="text-blue-500 hover:text-blue-600">Log in</Link>
+              Already have an account? <Link to="/auth/login" className="text-blue-500 hover:text-blue-600">Log in</Link>
             </p>
           )}
           {type === 'login' && (
@@ -203,3 +226,4 @@ const UnifiedAuth = ({ type }) => {
 };
 
 export default UnifiedAuth;
+
