@@ -41,83 +41,85 @@ import StudentDashboard from './Component/Student/Dashboard/StudentDashboard'
 
 import UnifiedAuth from "./Component/Auth/UnifiedAuth";
 import { AuthProvider } from "./Component/Auth/context/AuthContext";
+import { Toaster } from "./components/ui/toaster";
+
 // In your routes configuration:
 
 const App = () => {
   return (
-    
-      <StudentProfileProvider>
-        <JobPreferencesProvider>
-          <AuthProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/student" element={<StudentProfileWizard />} />
-              <Route path="/ForJobs" element={<BuildProfile />}></Route>
-              <Route path="/resume" element={<Resume />} />
-              {/* <Route path="/company" element={<Company />} /> */}
-              <Route path="/Process" element={<OnBoard />} />
-              <Route path="/register" element={<Jobs />} />
-              <Route path="/CreateProfile" element={<CreateProfile />} />
-              <Route path="/WelcomePage" element={<Welcome />} />
-              <Route path="/FindTalent" element={<FindTalent />} />
-              <Route path="/PostJob" element={<PostJob />} />
-              <Route path="/CompanyProfile" element={<CompanyProfile />} />
-              <Route path="/StudentDashboard" element={<StudentDashboard />} />
-           
-              <Route path="/Mentor" element={<Mentor />} />
-              <Route path="/become-Mentor" element={<BecomeMentorForm />} />
-              <Route path="/MentorProfile" element={<MentorProfileForm />}/>
-              <Route path="/AiResume" element={<AiResume />} />
-              <Route path="/JobList" element={<JobListings />} />
-              <Route path="/AiMock" element={<AiMock/>} />
-              <Route path="/AiChatBot" element={<AiChatBot/>} />
-
-              {/* <Route path="/JobAuth" element={<JobAuth/>} /> */}
-              {/* <Route path="/MentorAuth" element={<MentorAuth/>} /> */}
-              <Route path="/CompanyDashboard" element={<CompnayDashboard/>} />
-              <Route path="/jobs" element={<JobsPage />} />
-              <Route path="/applications" element={<ApplicationsPage />} />
-              <Route path="/MentorList" element={<MentorList />} />
-              <Route path="/mentors" element={<MentorList />} />
-              <Route path="/JobListingCard" element={<JobListingCard />} />
-              <Route path="/SeekerJobListing" element={<SeekerJobListing />} />
-              <Route path="/UserDashboardWizard" element={<UserDashboardWizard />} />
-              <Route path="/JobDashboard" element={<DashboardLayout />}>
-                <Route path="profile" element={<UserDashboardWizard />} />
-                <Route path="jobs" element={<SavedJobs />} />
-              </Route>
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route path="profile" element={<UserDashboardWizard />} />
-                <Route path="saved-jobs" element={<SavedJobs />} />
-                <Route path="applications" element={<MyApplications />} />
-                <Route path="settings" element={<DashboardSettings />} />
-              </Route>
-              <Route path="/student/dashboard" element={<DashboardLayout />}>
-                <Route index element={<StudentDashboard />} />
-                {/* <Route path="learning" element={<Learning />} />
-                <Route path="internships" element={<Internships />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="courses" element={<Courses />} />
-                <Route path="settings" element={<Settings />} />
-                <Route path="help" element={<Help />} /> */}
-              </Route>
-
-              <Route path="/Auth">
-                <Route path="login" element={<UnifiedAuth type="login" />} />
-                <Route path="register" element={<UnifiedAuth type="register" />} />
-              </Route>
-
+    <>
+      <AuthProvider>
+        <StudentProfileProvider>
+          <JobPreferencesProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/student" element={<StudentProfileWizard />} />
+                <Route path="/ForJobs" element={<BuildProfile />}></Route>
+                <Route path="/resume" element={<Resume />} />
+                {/* <Route path="/company" element={<Company />} /> */}
+                <Route path="/Process" element={<OnBoard />} />
+                <Route path="/register" element={<Jobs />} />
+                <Route path="/CreateProfile" element={<CreateProfile />} />
+                <Route path="/WelcomePage" element={<Welcome />} />
+                <Route path="/FindTalent" element={<FindTalent />} />
+                <Route path="/PostJob" element={<PostJob />} />
+                <Route path="/CompanyProfile" element={<CompanyProfile />} />
+                <Route path="/StudentDashboard" element={<StudentDashboard />} />
              
-            
-            </Routes>
-           
-          </Router>
-          </AuthProvider>
-        </JobPreferencesProvider>
-      </StudentProfileProvider>
-   
+                <Route path="/Mentor" element={<Mentor />} />
+                <Route path="/become-Mentor" element={<BecomeMentorForm />} />
+                <Route path="/MentorProfile" element={<MentorProfileForm />}/>
+                <Route path="/AiResume" element={<AiResume />} />
+                <Route path="/JobList" element={<JobListings />} />
+                <Route path="/AiMock" element={<AiMock/>} />
+                <Route path="/AiChatBot" element={<AiChatBot/>} />
+
+                {/* <Route path="/JobAuth" element={<JobAuth/>} /> */}
+                {/* <Route path="/MentorAuth" element={<MentorAuth/>} /> */}
+                <Route path="/CompanyDashboard" element={<CompnayDashboard/>} />
+                <Route path="/jobs" element={<JobsPage />} />
+                <Route path="/applications" element={<ApplicationsPage />} />
+                <Route path="/MentorList" element={<MentorList />} />
+                <Route path="/mentors" element={<MentorList />} />
+                <Route path="/JobListingCard" element={<JobListingCard />} />
+                <Route path="/SeekerJobListing" element={<SeekerJobListing />} />
+                <Route path="/UserDashboardWizard" element={<UserDashboardWizard />} />
+                <Route path="/JobDashboard" element={<DashboardLayout />}>
+                  <Route path="profile" element={<UserDashboardWizard />} />
+                  <Route path="jobs" element={<SavedJobs />} />
+                </Route>
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route path="profile" element={<UserDashboardWizard />} />
+                  <Route path="saved-jobs" element={<SavedJobs />} />
+                  <Route path="applications" element={<MyApplications />} />
+                  <Route path="settings" element={<DashboardSettings />} />
+                </Route>
+                <Route path="/student/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<StudentDashboard />} />
+                  {/* <Route path="learning" element={<Learning />} />
+                  <Route path="internships" element={<Internships />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="courses" element={<Courses />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="help" element={<Help />} /> */}
+                </Route>
+
+                <Route path="/Auth">
+                  <Route path="login" element={<UnifiedAuth type="login" />} />
+                  <Route path="register" element={<UnifiedAuth type="register" />} />
+                </Route>
+
+               
+             
+              </Routes>
+            </Router>
+          </JobPreferencesProvider>
+        </StudentProfileProvider>
+      </AuthProvider>
+      <Toaster />
+    </>
   );
 };
 
-export default App;
+export default App;
