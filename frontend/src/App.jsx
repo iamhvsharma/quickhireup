@@ -52,11 +52,11 @@ const App = () => {
           <Router>
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/student" element={<StudentProfileWizard />} />
-              <Route path="/ForJobs" element={<BuildProfile />}></Route>
+              <Route path="/student/onboarding" element={<StudentProfileWizard />} />
+              <Route path="/jobseeker/onboarding" element={<BuildProfile />}></Route>
               <Route path="/resume" element={<Resume />} />
               {/* <Route path="/company" element={<Company />} /> */}
-              <Route path="/Process" element={<OnBoard />} />
+              <Route path="/company/onboarding" element={<OnBoard />} />
               <Route path="/register" element={<Jobs />} />
               <Route path="/CreateProfile" element={<CreateProfile />} />
               <Route path="/WelcomePage" element={<Welcome />} />
