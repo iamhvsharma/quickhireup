@@ -10,6 +10,12 @@ app.use(cors({
     credentials: true
 }));
 
+// Add request logging middleware
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -24,6 +30,16 @@ app.get('/health', (req, res) => {
     res.status(200).json({
         status: "success",
         message: "Server is running"
+    });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Global error handler:', err);
+    res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error: err.message
     });
 });
 

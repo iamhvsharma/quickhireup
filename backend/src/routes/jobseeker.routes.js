@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticate, authorize } from '../middlewares/auth.middleware.js';
 import upload from '../middlewares/upload.js';
 import JobSeeker from '../models/jobSeeker.model.js';
+import nodemailer from 'nodemailer';
 
 const router = express.Router();
 
@@ -24,7 +25,9 @@ router.post('/jobseeker', upload.single('resume'), async (req, res) => {
       resume: req.file ? {
         url: req.file.path,
         fileName: req.file.originalname
-      } : null
+      } : null,
+      onboardingCompleted: true,
+      onboardingStep: 'profile_completed'
     });
 
     // Save to database
@@ -33,7 +36,8 @@ router.post('/jobseeker', upload.single('resume'), async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Profile created successfully',
-      data: jobSeeker
+      data: jobSeeker,
+      redirectTo: '/onboarding'
     });
 
   } catch (error) {
@@ -178,6 +182,145 @@ router.post('/profile/verify-email', authenticate, async (req, res) => {
     res.json({ message: 'Email verified successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// Add these routes
+router.post('/jobseeker/send-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email is required' 
+      });
+    }
+    
+    console.log('Attempting to send verification to:', email);
+    console.log('Using email configuration:', {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS ? '****' : 'not set'
+    });
+    
+    // Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    console.log('Generated OTP:', otp);
+    
+    // Store OTP in session/cache/database
+    global.otpStore = global.otpStore || {};
+    global.otpStore[email] = {
+      otp,
+      timestamp: Date.now()
+    };
+
+    console.log('Creating nodemailer transporter...');
+    // Create nodemailer transporter with more detailed configuration
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      },
+      debug: true // Enable debug logging
+    });
+
+    // Verify the transporter configuration
+    try {
+      await transporter.verify();
+      console.log('Transporter verification successful');
+    } catch (verifyError) {
+      console.error('Transporter verification failed:', verifyError);
+      throw new Error('Email configuration error: ' + verifyError.message);
+    }
+
+    console.log('Setting up mail options...');
+    // Email options
+    const mailOptions = {
+      from: `"QuickHireUp" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Email Verification OTP',
+      html: `
+        <h1>Email Verification</h1>
+        <p>Your verification code is: <strong>${otp}</strong></p>
+        <p>This code will expire in 10 minutes.</p>
+      `
+    };
+
+    console.log('Attempting to send email...');
+    // Send email
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
+
+    res.json({ success: true, message: 'Verification code sent successfully' });
+  } catch (error) {
+    console.error('Detailed error in send-verification:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      command: error.command,
+      response: error.response
+    });
+    
+    let errorMessage = 'Error sending verification code';
+    if (error.code === 'EAUTH') {
+      errorMessage = 'Email authentication failed. Please check email credentials.';
+    } else if (error.code === 'ESOCKET') {
+      errorMessage = 'Network error while sending email.';
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      message: errorMessage,
+      error: error.message 
+    });
+  }
+});
+
+router.post('/jobseeker/verify-otp', (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    
+    // Get stored OTP
+    const storedData = global.otpStore[email];
+    
+    if (!storedData) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No verification code found. Please request a new one.' 
+      });
+    }
+
+    // Check if OTP is expired (10 minutes)
+    if (Date.now() - storedData.timestamp > 10 * 60 * 1000) {
+      delete global.otpStore[email];
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Verification code expired. Please request a new one.' 
+      });
+    }
+
+    // Verify OTP
+    if (parseInt(otp) === storedData.otp) {
+      delete global.otpStore[email]; // Clear OTP after successful verification
+      return res.json({ 
+        success: true, 
+        message: 'Email verified successfully' 
+      });
+    }
+
+    res.status(400).json({ 
+      success: false, 
+      message: 'Invalid verification code' 
+    });
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error verifying code' 
+    });
   }
 });
 

@@ -43,7 +43,6 @@ import { AuthProvider } from "./Component/Auth/context/AuthContext";
 import { Toaster } from "./components/ui/toaster";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 // In your routes configuration:
 
 const App = () => {
@@ -57,7 +56,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/student/onboarding" element={<StudentProfileWizard />} />
-              <Route path="/jobseeker/onboarding" element={<BuildProfile />}></Route>
+              <Route path="/jobseeker/onboarding" element={<ProfileForm />}></Route>
               <Route path="/resume" element={<Resume />} />
               {/* <Route path="/company" element={<Company />} /> */}
               <Route path="/company/onboarding" element={<OnBoard />} />
